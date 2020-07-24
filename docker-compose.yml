@@ -1,17 +1,18 @@
 version: "3.5"
 
 services:
-  namhoa-fe-dev:
-    container_name: namhoa-fe-dev
+  fe:
+    container_name: "${APP_NAME}-fe"
     build:
       context: .
+      args:
+        GIT_URL: ${GIT_URL}
       dockerfile: Dockerfile
     volumes:
-      - "./sc-angular:/app"
+      - "${SOURCE_PATH}:/app"
       - "/app/node_modules"
     ports:
       - "4201:4200"
-
   # namhoa-fe-prod:
   #   container_name: namhoa-fe-prod
   #   build:

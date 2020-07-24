@@ -1,4 +1,18 @@
 
+# Dev
+
+```
+$ docker-compose up -d
+
+// or
+
+$ docker-compose up -d --build
+```
+
+# Deploy
+
+```
+```
 
 # References
 - https://mherman.org/blog/dockerizing-an-angular-app/
