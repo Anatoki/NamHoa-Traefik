@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  namhoa-fe-dev:
+    container_name: namhoa-fe-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./sc-angular:/app"
+      - "/app/node_modules"
+    ports:
+      - "4201:4200"
+
+  # namhoa-fe-prod:
+  #   container_name: namhoa-fe-prod
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile-prod
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.whoami.rule=Host(`anatoki.com`)"
+  #     - "traefik.http.routers.whoami.entrypoints=web"
