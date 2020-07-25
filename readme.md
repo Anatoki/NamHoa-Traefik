@@ -1,12 +1,20 @@
+#
+
+```
+$ docker-compose exec be composer install
+$ docker-compose exec be php artisan key:generate
+```
+
+- Import DB
+
+- Export DB
 
 # Dev
 
 ```
-$ docker-compose up -d
-
+$ docker-compose up -d <service_name>
 // or
-
-$ docker-compose up -d --build
+$ docker-compose up -d --build <service_name>
 ```
 
 # Deploy

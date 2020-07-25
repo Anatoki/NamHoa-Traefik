@@ -1,24 +1,70 @@
-version: "3.5"
+version: "3.7"
 
 services:
-  fe:
-    container_name: "${APP_NAME}-fe"
-    build:
-      context: .
-      args:
-        GIT_URL: ${GIT_URL}
-      dockerfile: Dockerfile
-    volumes:
-      - "${SOURCE_PATH}:/app"
-      - "/app/node_modules"
-    ports:
-      - "4201:4200"
-  # namhoa-fe-prod:
-  #   container_name: namhoa-fe-prod
+  # fe:
+  #   container_name: "${APP_NAME}-fe"
   #   build:
-  #     context: .
-  #     dockerfile: Dockerfile-prod
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.whoami.rule=Host(`anatoki.com`)"
-  #     - "traefik.http.routers.whoami.entrypoints=web"
+  #     context: ${SOURCE_FE_PATH}
+  #     dockerfile: $PWD/Dockerfile-fe
+  #   volumes:
+  #     - "${SOURCE_FE_PATH}:/app"
+  #     - "/app/node_modules"
+  #   ports:
+  #     - "4201:4200"
+
+  be:
+    build:
+      args:
+        user: jack
+        uid: 1000
+      context: ${SOURCE_BE_PATH}
+      dockerfile: $PWD/Dockerfile-be
+    container_name: ${APP_NAME}-be
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www/
+    volumes:
+      - "${SOURCE_BE_PATH}:/var/www"
+    networks:
+      - namhoa
+
+  db:
+    image: mysql:5.7
+    container_name: ${APP_NAME}-db
+    restart: unless-stopped
+    tty: true
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./config/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - namhoa
+    ports:
+      - "3306:3306"
+
+  nginx:
+    image: nginx:alpine
+    container_name: ${APP_NAME}-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8080:80
+    volumes:
+      - "${SOURCE_BE_PATH}:/var/www"
+      - ./config/nginx:/etc/nginx/conf.d/
+    networks:
+      - namhoa
+
+networks:
+  namhoa:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
